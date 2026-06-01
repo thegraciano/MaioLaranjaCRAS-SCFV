@@ -1,0 +1,336 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif}
+#app{background:#F07800;min-height:100vh;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;position:relative;overflow:hidden}
+.flor{position:absolute;opacity:0.15;pointer-events:none}
+.titulo-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;z-index:1}
+.titulo{background:#fff;color:#E86000;font-size:26px;font-weight:900;border-radius:18px;padding:9px 32px;border:3px solid #E86000;letter-spacing:1px}
+.subtitulo{background:#E86000;color:#fff;font-size:12px;font-weight:700;border-radius:10px;padding:3px 18px;letter-spacing:1px}
+
+.tela-escolha{background:#fff;border-radius:24px;border:3px solid #F5A623;padding:36px 48px;display:flex;flex-direction:column;align-items:center;gap:24px;box-shadow:0 6px 0 rgba(0,0,0,0.1);z-index:1;max-width:560px;width:100%}
+.tela-escolha h2{font-size:22px;font-weight:900;color:#E86000;text-align:center}
+.tela-escolha p{font-size:15px;color:#666;text-align:center}
+.escolha-row{display:flex;gap:32px;justify-content:center}
+.escolha-card{display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;padding:20px 28px;border-radius:20px;border:3px solid #eee;background:#fff;transition:all 0.2s}
+.escolha-card:hover{border-color:#F5A623;background:#FFF8F0;transform:translateY(-4px)}
+.escolha-card span{font-size:17px;font-weight:900;color:#E86000}
+
+.jogo-wrap{display:flex;gap:24px;align-items:flex-start;z-index:1;width:100%;max-width:900px}
+.coluna-esq{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:200px}
+.coluna-centro{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px}
+.coluna-dir{display:flex;flex-direction:column;gap:10px;min-width:200px}
+
+.legenda-box{background:#fff;border-radius:16px;border:3px solid #F5A623;padding:14px 16px;width:100%}
+.legenda-box h3{font-size:13px;font-weight:900;color:#E86000;margin-bottom:8px;text-align:center}
+.leg-item{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:13px;font-weight:700;color:#333}
+.leg-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,0.12)}
+
+.progresso-box{background:#fff;border-radius:16px;border:3px solid #F5A623;padding:12px 14px;width:100%}
+.progresso-box h3{font-size:13px;font-weight:900;color:#E86000;margin-bottom:8px;text-align:center}
+.prog-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.prog-dot{width:22px;height:22px;border-radius:50%;border:2.5px solid #ddd;background:#f9f9f9;transition:all 0.3s;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:transparent}
+.prog-dot.certo{background:#2ECC71;border-color:#27ae60;color:#fff}
+.prog-dot.errado{background:#E74C3C;border-color:#c0392b;color:#fff}
+.prog-dot.atual{border-color:#E86000;border-width:3px;background:#FFF3E0}
+
+.placar-box{background:#fff;border-radius:16px;border:3px solid #F5A623;padding:12px 14px;width:100%;text-align:center}
+.placar-num{font-size:32px;font-weight:900;color:#E86000}
+.placar-label{font-size:12px;color:#888;font-weight:700}
+
+.card{background:#fff;border-radius:22px;border:3px solid #F5A623;padding:20px 28px;width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 4px 0 rgba(0,0,0,0.1)}
+.instrucao{font-size:14px;color:#E86000;font-weight:700;text-align:center}
+.nome-parte{font-size:28px;font-weight:900;color:#222;text-align:center}
+.opcoes-row{display:flex;gap:24px;justify-content:center;margin-top:4px}
+.opcao{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer}
+.circulo{width:80px;height:80px;border-radius:50%;border:4px solid rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 5px 0 rgba(0,0,0,0.15)}
+.circulo:hover{transform:scale(1.1);box-shadow:0 7px 0 rgba(0,0,0,0.2)}
+.circulo.verde{background:#2ECC71}
+.circulo.amarelo{background:#F1C40F}
+.circulo.vermelho{background:#E74C3C}
+.circulo.certo{box-shadow:0 0 0 6px #27ae60,0 0 0 11px rgba(39,174,96,0.2);transform:scale(1.1)}
+.circulo.errado{animation:shake 0.4s ease;box-shadow:0 0 0 6px #c0392b,0 0 0 11px rgba(192,57,43,0.15)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.cor-label{font-size:14px;font-weight:900;color:#fff}
+
+.feedback-box{border-radius:16px;padding:14px 20px;font-size:15px;line-height:1.65;text-align:center;border:3px solid rgba(255,255,255,0.4);width:100%;color:#fff;background:rgba(0,0,0,0.12);font-weight:600;transition:all 0.3s;min-height:60px;display:flex;align-items:center;justify-content:center}
+.feedback-box.certo{border-color:#2ECC71;background:#1a6b36}
+.feedback-box.errado{border-color:#E74C3C;background:#8b1a1a}
+
+.btn{background:#fff;color:#E86000;border:2.5px solid #E86000;border-radius:12px;padding:11px 32px;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,0.12);transition:transform 0.1s;font-family:inherit}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:0.4;cursor:default;transform:none}
+
+.tela-fim{background:#fff;border-radius:22px;border:3px solid #F5A623;padding:28px 36px;max-width:600px;width:100%;text-align:center;flex-direction:column;align-items:center;gap:16px;display:none;box-shadow:0 6px 0 rgba(0,0,0,0.1);z-index:1}
+.tela-fim h2{font-size:26px;font-weight:900;color:#E86000}
+.msg-fim{font-size:14px;line-height:1.8;color:#444;text-align:left;border-left:4px solid #F5A623;padding-left:14px}
+.estrelas{font-size:42px;letter-spacing:4px;color:#F5A623}
+
+.rodape{color:rgba(255,255,255,0.7);font-size:12px;font-weight:600;text-align:center;padding:4px 0;z-index:1}
+</style>
+
+<div id="app">
+  <svg class="flor" style="top:-30px;left:-30px;width:160px" viewBox="0 0 120 120"><g transform="translate(60,60)"><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3"/><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(60)"/><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(120)"/><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(180)"/><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(240)"/><ellipse rx="18" ry="34" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(300)"/><circle r="16" fill="#E86000" stroke="#222" stroke-width="3"/><circle r="10" fill="#F5A623"/><circle r="5" fill="#E86000"/></g></svg>
+  <svg class="flor" style="top:-30px;right:-30px;width:140px" viewBox="0 0 120 120"><g transform="translate(60,60)"><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3"/><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(60)"/><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(120)"/><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(180)"/><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(240)"/><ellipse rx="16" ry="30" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(300)"/><circle r="14" fill="#E86000" stroke="#222" stroke-width="3"/><circle r="9" fill="#F5A623"/><circle r="4" fill="#E86000"/></g></svg>
+  <svg class="flor" style="bottom:20px;left:-20px;width:120px" viewBox="0 0 120 120"><g transform="translate(60,60)"><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(60)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(120)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(180)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(240)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(300)"/><circle r="13" fill="#E86000" stroke="#222" stroke-width="3"/><circle r="8" fill="#F5A623"/><circle r="4" fill="#E86000"/></g></svg>
+  <svg class="flor" style="bottom:20px;right:-20px;width:120px" viewBox="0 0 120 120"><g transform="translate(60,60)"><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(60)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(120)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(180)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(240)"/><ellipse rx="15" ry="28" fill="#F5A623" stroke="#222" stroke-width="3" transform="rotate(300)"/><circle r="13" fill="#E86000" stroke="#222" stroke-width="3"/><circle r="8" fill="#F5A623"/><circle r="4" fill="#E86000"/></g></svg>
+
+  <div class="titulo-wrap">
+    <div class="titulo">🚦 Semáforo do Toque 🚦</div>
+    <div class="subtitulo">🌸 Maio Laranja — Proteção das Crianças 🌸</div>
+  </div>
+
+  <div class="tela-escolha" id="tela-escolha">
+    <h2>Olá! Quem vai jogar hoje?</h2>
+    <p>Escolha o personagem para começar o jogo!</p>
+    <div class="escolha-row">
+      <div class="escolha-card" onclick="iniciar('menino')">
+        <svg width="110" height="180" viewBox="0 0 110 180" id="prev-menino"></svg>
+        <span>Menino</span>
+      </div>
+      <div class="escolha-card" onclick="iniciar('menina')">
+        <svg width="110" height="180" viewBox="0 0 110 180" id="prev-menina"></svg>
+        <span>Menina</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="tela-jogo" style="display:none;width:100%;max-width:900px;display:none;flex-direction:column;align-items:center;gap:14px">
+    <div class="jogo-wrap">
+      <div class="coluna-esq">
+        <div class="legenda-box">
+          <h3>Legenda</h3>
+          <div class="leg-item"><div class="leg-dot" style="background:#2ECC71"></div>Verde — pode tocar</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#F1C40F"></div>Amarelo — atenção!</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#E74C3C"></div>Vermelho — não pode</div>
+        </div>
+        <div class="progresso-box">
+          <h3>Progresso</h3>
+          <div class="prog-row" id="progresso"></div>
+        </div>
+        <div class="placar-box">
+          <div class="placar-num" id="placar-num">0</div>
+          <div class="placar-label">acertos</div>
+        </div>
+        <button class="btn" onclick="voltarEscolha()" style="font-size:13px;padding:8px 16px">↩ Trocar personagem</button>
+      </div>
+
+      <div class="coluna-centro">
+        <div class="card" id="card">
+          <div class="instrucao">Qual é a cor do semáforo para esta parte do corpo?</div>
+          <svg id="svg-corpo" width="180" height="240" viewBox="0 0 150 210"></svg>
+          <div class="nome-parte" id="nome-parte"></div>
+          <div class="opcoes-row">
+            <div class="opcao" onclick="responder('vermelho')">
+              <div class="circulo vermelho" id="btn-vermelho"><svg width="34" height="34" viewBox="0 0 30 30"><line x1="8" y1="8" x2="22" y2="22" stroke="#fff" stroke-width="3" stroke-linecap="round"/><line x1="22" y1="8" x2="8" y2="22" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div>
+              <div class="cor-label">Vermelho</div>
+            </div>
+            <div class="opcao" onclick="responder('amarelo')">
+              <div class="circulo amarelo" id="btn-amarelo"><svg width="34" height="34" viewBox="0 0 30 30"><text x="15" y="23" text-anchor="middle" font-size="26" font-weight="900" fill="#7a5a00">!</text></svg></div>
+              <div class="cor-label">Amarelo</div>
+            </div>
+            <div class="opcao" onclick="responder('verde')">
+              <div class="circulo verde" id="btn-verde"><svg width="34" height="34" viewBox="0 0 30 30"><polyline points="5,15 12,22 25,8" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="cor-label">Verde</div>
+            </div>
+          </div>
+        </div>
+        <div class="feedback-box" id="feedback">Clique na cor correta para esta parte do corpo!</div>
+        <button class="btn" id="btn-prox" onclick="proxima()" style="display:none">Próximo →</button>
+      </div>
+
+      <div class="coluna-dir">
+        <div class="legenda-box" style="border-color:#F5A623">
+          <h3 style="color:#E86000">Como jogar</h3>
+          <p style="font-size:13px;color:#555;line-height:1.6">Olhe o desenho e o nome da parte do corpo destacada em laranja.<br><br>Depois clique na cor que representa aquela parte:<br><br>🔴 Não pode tocar<br>🟡 Atenção, cuidado<br>🟢 Toque seguro</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tela-fim" id="tela-fim">
+    <div class="estrelas" id="estrelas-fim"></div>
+    <h2>Parabéns! Você terminou!</h2>
+    <div class="msg-fim">
+      <p>O <strong>Maio Laranja</strong> é um mês muito importante para cuidar e proteger as crianças. Ele ensina que o nosso corpo é muito especial e merece respeito.</p><br>
+      <p>Existem toques que são bons, como abraço, carinho e ajuda. Mas também existem toques que podem deixar a criança triste, com medo ou desconfortável. Quando isso acontecer, a criança deve dizer <strong>"NÃO"</strong>, sair de perto e contar para um adulto de confiança, como a mãe, o pai, a professora ou outro responsável.</p><br>
+      <p>🟢 Existem toques seguros<br>🟡 Existem toques que precisamos tomar cuidado<br>🔴 E existem toques que ninguém pode fazer</p><br>
+      <p><strong>Seu corpo é só seu</strong>, e ninguém pode pedir segredo sobre toques no corpo. Você merece carinho, proteção e respeito todos os dias.</p>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:4px">
+      <button class="btn" onclick="reiniciar()">🔄 Jogar de novo</button>
+      <button class="btn" onclick="voltarEscolha()">↩ Trocar personagem</button>
+    </div>
+  </div>
+
+  <div class="rodape">Desenvolvido por Leonardo da Silva Graciano</div>
+</div>
+
+<script>
+const PARTES=[
+  {nome:"Cabeça",cor:"verde",destaque:"cabeca",acerto:"Isso mesmo! A cabeça pode receber toques carinhosos, como cafuné ou abraço da família. São toques de amor e cuidado.",erro:"A cor certa é VERDE. A cabeça pode receber toques carinhosos, como cafuné ou abraço da família."},
+  {nome:"Boca",cor:"vermelho",destaque:"boca",acerto:"Correto! Ninguém deve tocar na sua boca sem necessidade. Se alguém tentar, conte para um adulto de confiança.",erro:"A cor certa é VERMELHA. Ninguém deve tocar na sua boca sem necessidade. Se alguém tentar, conte para um adulto de confiança."},
+  {nome:"Ombro",cor:"amarelo",destaque:"ombro",acerto:"Muito bem! Às vezes alguém toca no ombro para chamar ou ajudar. Mas se você não gostar do toque, é importante falar!",erro:"A cor certa é AMARELA. O ombro pode ser tocado em algumas situações, mas se você não gostar, fale para um adulto."},
+  {nome:"Braço",cor:"verde",destaque:"braco",acerto:"Ótimo! O braço pode ser tocado em brincadeiras, ajuda ou carinho. É um toque normal e seguro.",erro:"A cor certa é VERDE. O braço pode ser tocado em brincadeiras, ajuda ou carinho. É um toque seguro."},
+  {nome:"Mão",cor:"verde",destaque:"mao",acerto:"Perfeito! Dar a mão, cumprimentar ou 'toca aqui' são toques seguros e carinhosos!",erro:"A cor certa é VERDE. Dar a mão, cumprimentar ou 'toca aqui' são toques seguros e bonitos."},
+  {nome:"Peito",cor:"vermelho",destaque:"peito",acerto:"Correto! O peito é uma parte íntima do corpo. Ninguém pode tocar sem necessidade. Seu corpo é seu!",erro:"A cor certa é VERMELHA. O peito é uma parte íntima. Ninguém pode tocar sem necessidade. Você pode dizer não!"},
+  {nome:"Barriga",cor:"amarelo",destaque:"barriga",acerto:"Muito bem! Alguns toques podem acontecer, mas fique atento. Se o toque te deixar desconfortável, fale para um adulto.",erro:"A cor certa é AMARELA. A barriga precisa de atenção. Se o toque te deixar desconfortável, conte para um adulto."},
+  {nome:"Partes íntimas",cor:"vermelho",destaque:"intimas",acerto:"Correto! As partes íntimas são privadas. Ninguém pode tocar, pedir para ver ou pedir segredo. Você pode sempre dizer não!",erro:"A cor certa é VERMELHA. As partes íntimas são privadas. Ninguém pode tocar, pedir para ver ou pedir segredo."},
+  {nome:"Coxa",cor:"amarelo",destaque:"coxa",acerto:"Ótimo! A coxa fica perto das partes íntimas, então precisamos tomar cuidado. Se o toque te incomodar, fale para um adulto.",erro:"A cor certa é AMARELA. A coxa fica perto das partes íntimas, por isso precisamos ter cuidado."},
+  {nome:"Pé",cor:"verde",destaque:"pe",acerto:"Parabéns! Tocar no pé pode acontecer em brincadeiras, cuidados ou ajuda. É um toque seguro!",erro:"A cor certa é VERDE. Tocar no pé pode acontecer em brincadeiras e cuidados. É um toque seguro."}
+];
+
+const ZONAS={
+  cabeca:`<ellipse cx="75" cy="36" rx="27" ry="30"/>`,
+  boca:`<ellipse cx="75" cy="59" rx="9" ry="5.5"/>`,
+  ombro:`<ellipse cx="38" cy="85" rx="15" ry="11"/><ellipse cx="112" cy="85" rx="15" ry="11"/>`,
+  braco:`<ellipse cx="30" cy="112" rx="12" ry="23"/><ellipse cx="120" cy="112" rx="12" ry="23"/>`,
+  mao:`<ellipse cx="28" cy="140" rx="11" ry="9"/><ellipse cx="122" cy="140" rx="11" ry="9"/>`,
+  peito:`<ellipse cx="75" cy="103" rx="20" ry="13"/>`,
+  barriga:`<ellipse cx="75" cy="122" rx="17" ry="11"/>`,
+  intimas:`<ellipse cx="75" cy="144" rx="15" ry="9"/>`,
+  coxa:`<ellipse cx="61" cy="167" rx="12" ry="17"/><ellipse cx="89" cy="167" rx="12" ry="17"/>`,
+  pe:`<ellipse cx="58" cy="190" rx="13" ry="6.5"/><ellipse cx="92" cy="190" rx="13" ry="6.5"/>`
+};
+
+function svgCorpo(tipo, destaque, w, h){
+  const isMenino = tipo==='menino';
+  const SKIN="#FDBCB4", HAIR=isMenino?"#8B5E3C":"#1a1010";
+  const SHIRT=isMenino?"#4FC3F7":"#F48FB1";
+  const PANTS=isMenino?"#42A5F5":"#CE93D8";
+  const HL="#FF9500";
+  let cabelo = isMenino
+    ? `<ellipse cx="75" cy="12" rx="27" ry="13" fill="${HAIR}"/>
+       <rect x="48" y="12" width="8" height="20" rx="4" fill="${HAIR}"/>
+       <rect x="99" y="12" width="8" height="20" rx="4" fill="${HAIR}"/>`
+    : `<ellipse cx="75" cy="10" rx="27" ry="14" fill="${HAIR}"/>
+       <rect x="46" y="12" width="9" height="55" rx="5" fill="${HAIR}"/>
+       <rect x="95" y="12" width="9" height="55" rx="5" fill="${HAIR}"/>
+       <ellipse cx="46" cy="58" rx="9" ry="14" fill="${HAIR}"/>
+       <ellipse cx="104" cy="58" rx="9" ry="14" fill="${HAIR}"/>`;
+  let roupa = isMenino
+    ? `<rect x="56" y="138" width="19" height="50" rx="8" fill="${PANTS}"/>
+       <rect x="75" y="138" width="19" height="50" rx="8" fill="${PANTS}"/>`
+    : `<ellipse cx="75" cy="152" rx="28" ry="20" fill="${PANTS}"/>
+       <rect x="58" y="155" width="17" height="35" rx="7" fill="${PANTS}"/>
+       <rect x="75" y="155" width="17" height="35" rx="7" fill="${PANTS}"/>`;
+  let zona = destaque && ZONAS[destaque] ? `<g fill="${HL}" fill-opacity="0.75" stroke="${HL}" stroke-width="2">${ZONAS[destaque]}</g>` : '';
+
+  return `
+    <rect x="62" y="64" width="26" height="15" rx="5" fill="${SKIN}"/>
+    <ellipse cx="75" cy="36" rx="27" ry="30" fill="${SKIN}" stroke="#e8a090" stroke-width="1.5"/>
+    ${cabelo}
+    <circle cx="64" cy="35" r="6" fill="white"/><circle cx="86" cy="35" r="6" fill="white"/>
+    <circle cx="65" cy="36" r="3.5" fill="#3a2a10"/><circle cx="87" cy="36" r="3.5" fill="#3a2a10"/>
+    <circle cx="66" cy="34" r="1.5" fill="white"/><circle cx="88" cy="34" r="1.5" fill="white"/>
+    <path d="M68,50 Q75,56 82,50" stroke="#c06a60" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="57" cy="43" r="5" fill="#FFB6C1" opacity="0.5"/>
+    <circle cx="93" cy="43" r="5" fill="#FFB6C1" opacity="0.5"/>
+    <ellipse cx="75" cy="107" rx="25" ry="34" fill="${SHIRT}" stroke="#ddd" stroke-width="1"/>
+    <rect x="64" y="64" width="22" height="16" rx="4" fill="${SHIRT}"/>
+    <ellipse cx="40" cy="86" rx="16" ry="12" fill="${SHIRT}"/>
+    <ellipse cx="110" cy="86" rx="16" ry="12" fill="${SHIRT}"/>
+    <ellipse cx="30" cy="112" rx="13" ry="24" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    <ellipse cx="120" cy="112" rx="13" ry="24" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    <ellipse cx="28" cy="140" rx="12" ry="9" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    <ellipse cx="122" cy="140" rx="12" ry="9" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    ${roupa}
+    <ellipse cx="58" cy="192" rx="13" ry="6" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    <ellipse cx="92" cy="192" rx="13" ry="6" fill="${SKIN}" stroke="#ddd" stroke-width="1"/>
+    ${zona}
+  `;
+}
+
+let personagem='menino', atual=0, resultados=[], respondeu=false, acertos=0;
+
+function desenharPreview(tipo, svgId){
+  document.getElementById(svgId).innerHTML = svgCorpo(tipo, null, 110, 180);
+}
+
+function iniciar(tipo){
+  personagem=tipo; atual=0; resultados=[]; respondeu=false; acertos=0;
+  document.getElementById('placar-num').textContent='0';
+  document.getElementById('tela-escolha').style.display='none';
+  document.getElementById('tela-fim').style.display='none';
+  const jogo=document.getElementById('tela-jogo');
+  jogo.style.display='flex';
+  buildProgresso();
+  mostrarParte();
+}
+
+function voltarEscolha(){
+  document.getElementById('tela-jogo').style.display='none';
+  document.getElementById('tela-fim').style.display='none';
+  document.getElementById('tela-escolha').style.display='flex';
+}
+
+function buildProgresso(){
+  const el=document.getElementById('progresso');
+  el.innerHTML='';
+  PARTES.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='prog-dot'+(i===0?' atual':'');
+    d.id='dot-'+i;
+    el.appendChild(d);
+  });
+}
+
+function mostrarParte(){
+  respondeu=false;
+  const p=PARTES[atual];
+  document.getElementById('nome-parte').textContent=p.nome;
+  document.getElementById('feedback').textContent='Clique na cor correta para esta parte do corpo!';
+  document.getElementById('feedback').className='feedback-box';
+  document.getElementById('btn-prox').style.display='none';
+  ['vermelho','amarelo','verde'].forEach(c=>{
+    const b=document.getElementById('btn-'+c);
+    b.classList.remove('certo','errado');
+    b.parentElement.style.pointerEvents='auto';
+    b.parentElement.style.opacity='1';
+  });
+  document.getElementById('svg-corpo').innerHTML=svgCorpo(personagem, p.destaque);
+  document.querySelectorAll('.prog-dot').forEach((d,i)=>d.classList.toggle('atual',i===atual));
+}
+
+function responder(cor){
+  if(respondeu)return;
+  respondeu=true;
+  const p=PARTES[atual];
+  const ok=cor===p.cor;
+  resultados[atual]=ok;
+  if(ok) acertos++;
+  document.getElementById('placar-num').textContent=acertos;
+  document.getElementById('dot-'+atual).classList.remove('atual');
+  document.getElementById('dot-'+atual).classList.add(ok?'certo':'errado');
+  document.getElementById('btn-'+cor).classList.add(ok?'certo':'errado');
+  if(!ok) setTimeout(()=>document.getElementById('btn-'+p.cor).classList.add('certo'),500);
+  ['vermelho','amarelo','verde'].forEach(c=>{
+    document.getElementById('btn-'+c).parentElement.style.pointerEvents='none';
+  });
+  const fb=document.getElementById('feedback');
+  fb.textContent=(ok?'Muito bem! ':'Quase! ')+(ok?p.acerto:p.erro);
+  fb.className='feedback-box '+(ok?'certo':'errado');
+  document.getElementById('btn-prox').style.display='block';
+}
+
+function proxima(){
+  atual++;
+  if(atual>=PARTES.length){mostrarFim();return;}
+  mostrarParte();
+}
+
+function mostrarFim(){
+  document.getElementById('tela-jogo').style.display='none';
+  const est=acertos>=9?'★★★':acertos>=6?'★★☆':'★☆☆';
+  document.getElementById('estrelas-fim').textContent=est;
+  const fim=document.getElementById('tela-fim');
+  fim.style.display='flex';
+}
+
+function reiniciar(){
+  iniciar(personagem);
+}
+
+desenharPreview('menino','prev-menino');
+desenharPreview('menina','prev-menina');
+</script>
